@@ -1,4 +1,4 @@
-
+'use strict';
 const express = require('express');
 const router = express.Router();
 const morgan = require('morgan');
@@ -37,7 +37,7 @@ app.post('/shopping-list', jsonParser, (req, res) => {
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`
+      const message = `Missing \`${field}\` in request body`;
       console.error(message);
       return res.status(400).send(message);
     }
@@ -47,10 +47,22 @@ app.post('/shopping-list', jsonParser, (req, res) => {
   res.status(201).json(item);
 });
 
-
 app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
 })
+
+app.post('/recipes',jsonParser, (req, res) => {
+  const requiredFields = ['name', 'ingredients'];
+  for(let key of requiredFields){
+    if(!(key in req.body)){
+      const errMessage = `Missing ${key} in request body`;
+      console.log(errMessage);
+      return res.status(400).send(errMessage);
+    }
+  }
+  const recipe = Recipes.create(req.body.name, req.body.ingredients);
+  res.status(201).json(recipe);
+});
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
