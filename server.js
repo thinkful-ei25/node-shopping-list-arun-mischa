@@ -1,4 +1,4 @@
-
+'use strict';
 const express = require('express');
 const router = express.Router();
 const morgan = require('morgan');
@@ -75,6 +75,26 @@ app.put('/shopping-list/:id', jsonParser, (req, res) => {
     budget: req.body.budget
   });
   res.status(204).end();
+});
+
+app.put('/recipes/:id', jsonParser, (req, res) => {
+  const requiredFields = ['id', 'name', 'ingredients'];
+  for(let key of requiredFields) {
+    if(!(key in req.body)) {
+      const message = `Missing ${key} in request body`;
+      console.log(message);
+      return res.status(400).send(message);
+    }
+  }
+
+  if(req.params.id !== req.body.id){
+    const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+    console.log(message);
+    return res.status(400).send(message);
+  }
+  const item = {id: req.params.id, name: req.body.name, ingredients: req.body.ingredients};
+  Recipes.update(item);
+  res.status(201).end();
 });
 
 // when DELETE request comes in with an id in path,
