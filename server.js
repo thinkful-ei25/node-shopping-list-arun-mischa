@@ -1,3 +1,4 @@
+'use strict';
 
 const express = require('express');
 const router = express.Router();
@@ -75,7 +76,13 @@ app.post('/recipes', jsonParser, (req, res) => {
 
 app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
-})
+});
+
+app.delete('/recipes/:itemID', (req, res) => {
+  Recipes.delete(req.params.itemID);
+  console.log(`Delete recipe with ID '${req.params.itemID}'`);
+  res.status(204).end();
+});
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
